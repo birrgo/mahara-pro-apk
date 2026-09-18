@@ -3,110 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mahara Pro | App Updates, Tech Tips & Digital Skills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Primary Page Metadata -->
-    <title>Mahara Pro | Online Work in Ethiopia, Tech Tips & Vacancies</title>
-    <meta name="title" content="Shiqela | Online Work in Ethiopia, Tech Tips & Vacancies">
-    <meta name="description" content="Shiqela is your primary platform for online work in Ethiopia, tech tips, digital skills, remote work strategies, and the latest online vacancy updates.">
-    <meta name="keywords" content="shiqela, shikela, online work in ethiopia, tech tips, online vacancy, remote jobs ethiopia, work from home ethiopia, ethiopian tech, digital skills, online jobs ethiopia">
-    <meta name="author" content="Shiqela">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://shiqela.online/">
-
-    <!-- Open Graph / Facebook / Discord / WhatsApp / Telegram Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://shiqela.online/">
-    <meta property="og:site_name" content="Mahara Pro">
-    <meta property="og:title" content="Mahara Pro - Home & Latest Index">
-    <meta property="og:description" content="Stay updated with the latest news, tech updates, online jobs, and social media tips on Mahara Pro.">
-    <meta property="og:image" content="https://shiqela.online/s.png">
-    <meta property="og:image:secure_url" content="https://shiqela.online/s.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="500">
-    <meta property="og:image:height" content="500">
-
-    <!-- X / Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Mahara Pro - Home & Latest Index">
-    <meta name="twitter:description" content="Stay updated with the latest news, tech updates, online jobs, and social media tips on Mahara Pro.">
-    <meta name="twitter:image" content="https://shiqela.online/s.png">
-    <meta name="twitter:image:alt" content="Mahara Pro Logo and Branding Preview">
-
-    <!-- Schema.org Structured Data for Google Search SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Mahara Pro",
-      "url": "https://shiqela.online/",
-      "image": "https://shiqela.online/s.png",
-      "description": "Stay updated with the latest news, tech updates, online jobs, and social media tips on Shikela."
-    }
+    <!-- PREVENT SPLASH WHEN SWITCHING MENUS/PAGES -->
+    <script>
+        if (sessionStorage.getItem('firatech_session_active') === 'true') {
+            document.documentElement.classList.add('no-splash');
+        }
     </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="news.css">
+    
     <style>
-        /* Sidebar iframe drawer overlay setup */
-        .menu-iframe-overlay {
+        /* Immediately hide splash if navigating pages in the same session */
+        .no-splash #appSplashOverlay {
+            display: none !important;
+        }
+
+        /* --- GLOBAL VARIABLES & BASE STYLES --- */
+        :root {
+            --primary-burgundy: #0F2C59;
+            --primary-gradient: linear-gradient(135deg, #081B38 0%, #0F2C59 50%, #030C1A 100%);
+            --accent-glow: rgba(15, 44, 89, 0.05);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
+            --safe-nav-height: calc(env(safe-area-inset-bottom, 0px) + 24px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-color: #fafbfc;
+            background-image: radial-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* --- FULL SCREEN SPLASH SCREEN OVERLAY --- */
+        #appSplashOverlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            background: #081B38;
+            z-index: 999999;
+            transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
+            overflow: hidden;
         }
-
-        .menu-iframe-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* 3/4 width (75%), 100% full height iframe container */
-        .menu-iframe-drawer {
+        
+        .splash-image-container {
             position: absolute;
             top: 0;
             left: 0;
-            width: 75%;
+            width: 100%;
             height: 100%;
-            border: none;
-            background: #081B38;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+        
+        .splash-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            animation: pulseSplash 3s infinite ease-in-out;
+        }
+        
+        @keyframes pulseSplash {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        .menu-iframe-overlay.active .menu-iframe-drawer {
-            transform: translateX(0);
+        /* Bottom Circular Loading Spinner */
+        .splash-spinner {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            margin-left: -22px;
+            z-index: 2;
+            width: 44px;
+            height: 44px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .bg-wave { position: absolute; left: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 11vh; min-height: 95px; }
+
+        /* --- HEADER STYLES --- */
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc(12px + env(safe-area-inset-top)) 16px 12px 16px;
+            background: rgba(8, 27, 56, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 16px;
+        }
+
+        .header-title-text { font-size: 16px; font-weight: 800; color: #ffffff; white-space: nowrap; }
+
+        .header-search-pill {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 8px 14px;
+            gap: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            max-width: 200px;
+            margin-left: auto;
+        }
+        .header-search-pill svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        /* --- TOP NAV TABS --- */
+        .top-nav-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: transparent;
+            overflow-x: auto;
+            position: relative;
+            z-index: 99;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .top-nav-tabs::-webkit-scrollbar { display: none; }
+
+        .top-tab {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-dark);
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .top-tab svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .top-tab.active { background: var(--primary-burgundy); color: #ffffff; border-color: var(--primary-burgundy); }
+
+        /* --- APP CONTENT --- */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 16px calc(85px + var(--safe-nav-height)) 16px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- BROADCAST CARDS --- */
+        .broadcasts-container { display: flex; flex-direction: column; gap: 14px; padding-bottom: 24px; }
+
+        .featured-broadcast-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .featured-broadcast-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-gradient); }
+
+        .badge-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+
+        .spotlight-pill {
+            background: rgba(15, 44, 89, 0.08);
+            color: var(--primary-burgundy);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .spotlight-pill.system-badge { background: #f0f4f9; color: #2563eb; }
+
+        .timestamp-log-text { font-size: 11px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+        .broadcast-image-frame { width: 100%; max-height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border-light); background: #f1f5f9; position: relative; cursor: pointer; }
+        .broadcast-image-frame img { width: 100%; height: 100%; object-fit: cover; filter: blur(12px); transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .broadcast-image-frame img.loaded { filter: blur(0); }
+
+        .clickable-news-content { cursor: pointer; }
+        .broadcast-title { font-size: 16px; font-weight: 800; color: var(--text-dark); line-height: 1.35; margin-bottom: 6px; }
+        .broadcast-body-text { font-size: 13.5px; font-weight: 500; color: #475569; line-height: 1.55; white-space: pre-wrap; }
+
+        .verified-footer-shield { text-align: center; padding: 24px 0 16px 0; display: flex; flex-direction: column; align-items: center; gap: 2px; display: none; }
+        .footer-shield-text { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; }
+
+        /* --- MENUS & OVERLAYS --- */
+        .menu-iframe-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .menu-iframe-overlay.active { opacity: 1; visibility: visible; }
+        .menu-iframe-drawer { position: absolute; top: 0; left: 0; width: 75%; height: 100%; border: none; background: #081B38; transform: translateX(-100%); transition: transform 0.3s ease-in-out; box-shadow: 4px 0 12px rgba(0,0,0,0.3); }
+        .menu-iframe-overlay.active .menu-iframe-drawer { transform: translateX(0); }
+
+        /* --- AD MOB STYLES & BOTTOM NAV SPACER --- */
+        .bottom-nav-spacer { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--safe-nav-height); background-color: #ffffff; z-index: 8999; }
+        .ad-container-wrapper { position: fixed; bottom: var(--safe-nav-height); left: 0; width: 100%; display: flex; justify-content: center; pointer-events: none; z-index: 9000; }
+        .admob-preview-banner { width: 320px; height: 50px; background: #f1c40f; color: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px dashed #d35400; border-radius: 4px; box-shadow: 0px 4px 10px rgba(0,0,0,0.25); text-align: center; pointer-events: auto; margin-bottom: 0px; }
+        
+        .native-ad-wrapper { display: flex; flex-direction: column; padding: 8px 12px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin-bottom: 12px; border: 1px solid var(--border-light); }
+        .sticky-ad-container { position: sticky; top: 0; z-index: 50; }
+        .native-ad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+        .native-ad-badge { background: #f59e0b; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .native-ad-location { font-size: 10px; color: #64748b; font-weight: 600; }
+        .native-ad-placeholder { display: block; width: 100%; height: 95px; min-height: 95px; margin: 0; padding: 0; border-radius: 8px; position: relative; overflow: hidden; box-sizing: border-box; z-index: 1; pointer-events: none; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: adLoadingPulse 1.5s infinite; }
+        @keyframes adLoadingPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .mock-interstitial-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .mock-interstitial-overlay.active { display: flex; }
+        .mock-interstitial-card { background: #ffffff; width: 100%; max-width: 360px; border-radius: 12px; padding: 24px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .mock-interstitial-close { position: absolute; top: 12px; right: 12px; background: #e2e8f0; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; font-weight: bold; cursor: pointer; color: #333; }
+
+        /* --- SEARCH MODAL --- */
+        .search-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 27, 56, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; flex-direction: column; padding: calc(12px + env(safe-area-inset-top)) 16px 20px 16px; }
+        .search-modal-overlay.active-search { display: flex; }
+        .search-box-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .search-input-wrapper { flex: 1; display: flex; align-items: center; background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .search-input-wrapper svg { width: 18px; height: 18px; color: var(--text-muted); margin-right: 8px; flex-shrink: 0; }
+        .search-news-field { width: 100%; height: 44px; border: none; outline: none; font-size: 14px; font-weight: 700; color: var(--text-dark); background: transparent; }
+        .close-search-btn { background: rgba(255, 255, 255, 0.9); border: none; color: var(--text-dark); font-size: 13px; font-weight: 800; padding: 10px 14px; border-radius: 12px; cursor: pointer; }
+        .search-results-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+        /* --- POPUP ALERT --- */
+        .custom-popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 27, 56, 0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 2100; justify-content: center; align-items: center; padding: 20px; }
+        .custom-popup-overlay.show-popup { display: flex; }
+        .custom-popup-modal { width: 100%; max-width: 360px; background: #ffffff; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08); }
+        .popup-status-icon { font-size: 40px; margin-bottom: 12px; display: inline-block; }
+        .popup-main-title { font-size: 17px; font-weight: 800; color: var(--text-dark); margin-bottom: 6px; }
+        .popup-body-desc { font-size: 13px; font-weight: 500; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
+        .popup-dismiss-action { width: 100%; padding: 12px; background: var(--primary-gradient); color: #ffffff; border: none; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
+    <script src="native-bridge.js"></script>
+    
+    <!-- FULL SCREEN SPLASH SCREEN OVERLAY -->
+    <div id="appSplashOverlay">
+        <div class="splash-image-container">
+            <img src="s1.png" alt="Loading Mahara Pro..." onerror="this.style.display='none'">
+        </div>
+        <div class="splash-spinner"></div>
+    </div>
 
     <div class="app-view">
-        <!-- Hidden Image for Googlebot Indexing -->
-        <img src="https://shiqela.online/s.png" alt="Shikela Logo Preview" style="display:none;">
-
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V75C375 75 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#081B38"/>
-                    <stop offset="1" stop-color="#0F2C59"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#081B38"/><stop offset="1" stop-color="#0F2C59"/></linearGradient></defs>
         </svg>
 
-        <!-- 3/4 Width, Full Height Menu Drawer with Iframe -->
-        <div class="menu-iframe-overlay" id="menuIframeOverlay">
-            <iframe class="menu-iframe-drawer" id="menuIframe" src="about:blank"></iframe>
-        </div>
+        <div class="menu-iframe-overlay" id="menuIframeOverlay"><iframe class="menu-iframe-drawer" id="menuIframe" src="about:blank"></iframe></div>
 
         <div class="custom-popup-overlay" id="customPopupModule">
             <div class="custom-popup-modal">
@@ -117,187 +319,472 @@
             </div>
         </div>
 
-        <div class="full-news-modal-overlay" id="fullNewsModalOverlay">
-            <div class="news-reader-header">
-                <h2 style="font-size: 15px; font-weight: 800;">Full Article Details</h2>
-                <button class="close-reader-btn" id="closeNewsReaderBtn" aria-label="Close Reader">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            <div class="news-reader-content" id="fullNewsReaderBody"></div>
-        </div>
-
         <div class="search-modal-overlay" id="searchModalOverlay">
             <div class="search-box-header">
                 <div class="search-input-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter Post Code..." autocomplete="off">
+                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Search any word or code..." autocomplete="off">
                 </div>
                 <button class="close-search-btn" id="closeSearchDrawerBtn">Cancel</button>
             </div>
             <div class="search-results-area" id="searchResultsArea">
-                <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
-                    Type a post code above to find updates quickly.
-                </div>
+                <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">Type a word above to search all posted items.</div>
             </div>
         </div>
 
-        <header class="nav-header" style="display: flex; align-items: center; justify-content: space-between;">
-            <!-- Left: 3-line Menu Button -->
-            <div class="header-left-group" style="display: flex; align-items: center;">
-                <button type="button" class="menu-action-btn" id="openMenuIframeBtn" aria-label="Open Menu" style="background: none; border: none; cursor: pointer; color: inherit; padding: 0; display: flex; align-items: center; justify-content: center;">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
+        <header class="nav-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button type="button" class="menu-action-btn" id="openMenuIframeBtn" style="background:none; border:none; cursor:pointer; color:inherit; padding:0; display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
+                <h1 class="header-title-text">What's new?</h1>
             </div>
-
-            <!-- Center: Title -->
-            <div class="header-center-group" style="flex: 1; text-align: center;">
-                <h1 class="header-title-text" style="margin: 0; text-align: center;">What's new?</h1>
-            </div>
-
-            <!-- Right: Live Clock & Search -->
-            <div class="header-right-group" style="display: flex; align-items: center; gap: 8px;">
-                <div class="header-live-clock-badge" id="topCornerLiveClock">00:00:00 AM</div>
-                <button class="search-action-btn" id="openSearchBtn" aria-label="Search News">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
+            <div class="header-search-pill" id="openSearchBtn">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Search updates...</span>
             </div>
         </header>
+        
+        <div class="top-nav-tabs">
+            <a href="index.html" class="top-tab active">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Home
+            </a>
+            <a href="s.html" class="top-tab">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><path d="M7 11a4 4 0 0 1 4-4"></path></svg>
+                Online Jobs
+            </a>
+            <a href="in.html" class="top-tab">
+                <svg viewBox="0 0 24 24"><path d="M9 21h6"></path><path d="M9 18h6"></path><path d="M12 3a7 7 0 0 0-7 7c0 2 1 3.9 2 5.5V18h10v-2.5c1-1.6 2-3.5 2-5.5a7 7 0 0 0-7-7z"></path><circle cx="12" cy="10" r="1.5"></circle><path d="M12 7v1M12 12v1M9 10h1M14 10h1"></path></svg>
+                Tech
+            </a>
+            <a href="sm.html" class="top-tab">
+                <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                Social
+            </a>
+        </div>
 
-        <main class="app-content">
-            <!-- Two-Choice Top Menu with Mahara Pro Update and Mahara Pro Tips -->
-            <div class="category-filter-row filter-btn-grid" id="filterPillsRow">
-                <button class="filter-pill filter-btn active-pill active" data-filter="Shikela Update" data-category="Shikela Update">Mahara Pro Update</button>
-                <button class="filter-pill filter-btn" data-filter="Shikela Tips" data-category="Shikela Tips">Mahara Pro Tips</button>
-            </div>
+        <main class="app-content" id="mainContentArea">
+            
+            <!-- HARDCODED NATIVE AD CARD: ALWAYS VISIBLE IMMEDIATELY -->
+            <article class="native-ad-wrapper sticky-ad-container" id="staticNativeAdContainer">
+                <div class="native-ad-header">
+                    <span class="native-ad-badge">Advertisement</span>
+                    <span class="native-ad-location">Sponsored</span>
+                </div>
+                <div id="native-feed-ad-sticky" class="native-ad-placeholder"></div>
+            </article>
 
             <div class="broadcasts-container" id="broadcastsContainer">
-                <div class="featured-broadcast-card">
-                    <h2 class="broadcast-title" style="font-size:14px; text-align:center; color: var(--text-muted);">Connecting to Secure Node...</h2>
-                </div>
+                <!-- Posts will render here -->
             </div>
-
-            <footer class="verified-footer-shield">
-                <span class="footer-shield-text">Mahara Pro  Matrix Verified</span>
-            </footer>
+            <footer class="verified-footer-shield" id="endOfListShield"><span class="footer-shield-text">Mahara Pro Matrix Verified</span></footer>
         </main>
 
-        <!-- Bottom Navigation Menu -->
-        <nav class="bottom-nav">
-            <!-- 1. Home (Active for index.html) -->
-            <a id="nav-home" href="index.html" class="nav-item active">
-                <div class="icon-bg">
-                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                </div>
-                <span>Home</span>
-            </a>
+        <div class="ad-container-wrapper" id="adContainerWrapper" style="display:none;">
+            <div class="admob-preview-banner" id="admobPreviewBanner">Home Banner Ad Preview Loading...</div>
+        </div>
+        
+        <div class="bottom-nav-spacer"></div>
 
-            <!-- 2. Online Jobs -->
-            <a id="nav-jobs" href="s.html" class="nav-item">
-                <div class="icon-bg">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                </div>
-                <span>Online Jobs</span>
-            </a>
-
-            <!-- 3. Tech -->
-            <a id="nav-tech" href="in.html" class="nav-item">
-                <div class="icon-bg">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </div>
-                <span>Tech</span>
-            </a>
-
-            <!-- 4. Social Media -->
-            <a id="nav-social" href="sm.html" class="nav-item">
-                <div class="icon-bg">
-                    <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                </div>
-                <span>Social Media</span>
-            </a>
-        </nav>
+        <div class="mock-interstitial-overlay" id="mockInterstitialModal">
+            <div class="mock-interstitial-card">
+                <button class="mock-interstitial-close" id="closeMockInterstitialBtn">✕</button>
+                <span style="background:#4285f4; color:#fff; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:bold;">WEB MOCK INTERSTITIAL</span>
+                <div style="font-size:48px; margin:20px 0 10px;">📢</div>
+                <h3 style="margin:0 0 8px; color:#1e293b;">AdMob Interstitial Ad Preview</h3>
+                <p style="font-size:12px; color:#64748b; margin-bottom:20px;" id="mockInterstitialIdText">ID: Loading...</p>
+                <p style="font-size:13px; color:#475569;">In the generated APK, a full-screen Google AdMob ad will take over the screen here.</p>
+                <button id="mockInterstitialContinueBtn" style="width:100%; margin-top:15px; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Continue to Article</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Integrated Module Script for Firebase & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Database Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCqwgwiukwKb7o6gwnaLoPQSWc7BfMDuYQ",
-            authDomain: "besuad.firebaseapp.com",
-            databaseURL: "https://besuad-default-rtdb.firebaseio.com",
-            projectId: "besuad",
-            storageBucket: "besuad.firebasestorage.app",
-            messagingSenderId: "641705823615",
-            appId: "1:641705823615:web:6502b2511ff8c0f251de4a",
-            measurementId: "G-2YSX71N08Q"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCqwgwiukWKb7o6gwnaLoPQSWc7BfMDuYQ", authDomain: "besuad.firebaseapp.com", databaseURL: "https://besuad-default-rtdb.firebaseio.com", projectId: "besuad", storageBucket: "besuad.firebasestorage.app", messagingSenderId: "641705823615", appId: "1:641705823615:web:6502b2511ff8c0f251de4a" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const APP_NODE_NAME = "app5";
 
-        // ==========================================
-        // 🔴 Set to app5 for this build
-        // ==========================================
-        const APP_NODE_NAME = "app5"; 
+        let rawShikelaNewsData = {}, rawNewNewsData = {}, localCachedBroadcasts = [];
+        let isOpeningArticle = false, bannerCreated = false;
+        
+        let currentPage = 0;
+        const ITEMS_PER_PAGE = 3;
+        let isRenderingBatch = false;
+        
+        window.globalAdConfig = {};
+        window.nativeAdObserver = null;
+        let nativeAdObserverStarted = false, activeNativeAdId = null, nativeAdOperation = Promise.resolve(), currentAdGeneration = 0, requestedNativeAdId = null;
 
-        let rawShikelaNewsData = {};
-        let rawNewNewsData = {};
-        let localCachedBroadcasts = [];
-        let currentActiveCategoryFilter = "Shikela Update";
-        let cardClockIntervalId = null;
+        // --- STRICT APP STATE CONTROL ---
+        const isSessionAlreadyStarted = sessionStorage.getItem('firatech_session_active') === 'true';
+        let appIsReadyForContent = isSessionAlreadyStarted;
+        let pushInitialized = false;
 
+        let isHandlingInitialAd = !isSessionAlreadyStarted;
+        let isHandlingResumeAd = false;
+
+        const escapeHTML = s => String(s || "").replace(/[&<>'"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[m]));
         const urlParams = new URLSearchParams(window.location.search);
         const isAdminMode = urlParams.get('admin') === 'true';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            streamLiveAdminUpdatesLog();
-            bindVisualInterfaceControls();
-            setupSearchEngineControls();
-            setupNewsReaderModalControls();
+        // Automatically hide s1.png when the App Open Ad is about to show
+        function clearSplashImageForAd() {
+            const imgContainer = document.querySelector('.splash-image-container');
+            const spinner = document.querySelector('.splash-spinner');
+            if (imgContainer) imgContainer.style.display = 'none';
+            if (spinner) spinner.style.display = 'none';
+        }
 
-            const closeBtn = document.getElementById('closePopupBtn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    document.getElementById('customPopupModule').classList.remove('show-popup');
-                });
+        function transitionToMainApp() {
+            if (appIsReadyForContent) return;
+            appIsReadyForContent = true;
+            sessionStorage.setItem('firatech_session_active', 'true');
+            
+            const splash = document.getElementById("appSplashOverlay");
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.documentElement.classList.add('no-splash');
+                }, 350);
+            }
+            if (isNativeApp() && window.Capacitor?.Plugins?.SplashScreen) {
+                window.Capacitor.Plugins.SplashScreen.hide().catch(()=>{});
+            }
+
+            if (!pushInitialized) {
+                pushInitialized = true;
+                setTimeout(initializePushNotifications, 500); 
+            }
+
+            triggerBannerAdHomePage();
+            if (localCachedBroadcasts.length > 0) {
+                renderFilteredBroadcasts();
+            }
+        }
+
+        function onGlobalAppOpenAdClosed() {
+            if (isHandlingInitialAd) {
+                isHandlingInitialAd = false;
+                transitionToMainApp();
+            } else if (isHandlingResumeAd) {
+                isHandlingResumeAd = false;
+                finishResumeSequence();
+            }
+        }
+
+        async function finishResumeSequence() {
+            const splash = document.getElementById("appSplashOverlay");
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.documentElement.classList.add('no-splash');
+                }, 350);
             }
             
-            initiateLiveInterfaceClocks();
+            const AdPlugin = getAdMobPlugin();
+            if (AdPlugin && AdPlugin.showBanner) {
+                try { await AdPlugin.showBanner(); } catch(e){}
+            }
+            restoreNativeAdIfApplicable();
+        }
+
+        function getAdMobPlugin() { return window.AdMobPlugin || null; }
+        function isNativeApp() { return typeof window !== "undefined" && window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" ? window.Capacitor.isNativePlatform() : false; }
+
+        function initializePushNotifications() {
+            if (!isNativeApp()) return;
+            const OneSignal = window.OneSignal;
+            if (!OneSignal) return;
+            
+            onValue(ref(db, `${APP_NODE_NAME}/oneSignal`), async (snapshot) => {
+                if (!snapshot.exists()) return;
+                const osData = snapshot.val();
+                if (!osData.appId) return;
+                try {
+                    if (typeof OneSignal.initialize === 'function') {
+                        await OneSignal.initialize(osData.appId);
+                        await OneSignal.Notifications.requestPermission(true);
+                    }
+                } catch (e) {}
+            }, { onlyOnce: true });
+        }
+
+        async function hideCurrentNativeAd() {
+            const AdPlugin = getAdMobPlugin();
+            if (!isNativeApp() || !AdPlugin || typeof AdPlugin.hideNativeAd !== "function") { activeNativeAdId = null; return; }
+            try { await AdPlugin.hideNativeAd(); } catch (error) {}
+            activeNativeAdId = null;
+        }
+
+        async function showNativeAdForSlot(element) {
+            const AdPlugin = getAdMobPlugin();
+            if (!element || !element.id || !isNativeApp() || !AdPlugin || !window.globalAdConfig?.nativeId) return;
+            const elementId = element.id;
+            requestedNativeAdId = elementId;
+
+            nativeAdOperation = nativeAdOperation.then(async () => {
+                const capturedGeneration = currentAdGeneration;
+                if (capturedGeneration !== currentAdGeneration || requestedNativeAdId !== elementId || activeNativeAdId === elementId || !document.body.contains(element)) return;
+                
+                const rect = element.getBoundingClientRect();
+                if (rect.width <= 0 || rect.height <= 0) return;
+
+                if (activeNativeAdId) {
+                    try { if (typeof AdPlugin.hideNativeAd === "function") await AdPlugin.hideNativeAd(); } catch (_) {}
+                    activeNativeAdId = null;
+                }
+
+                if (capturedGeneration !== currentAdGeneration || requestedNativeAdId !== elementId) return;
+                try {
+                    await AdPlugin.showNativeAd({ 
+                        adId: elementId, 
+                        adUnitId: window.globalAdConfig.nativeId, 
+                        template: "small", 
+                        x: Math.round(rect.left), 
+                        y: Math.round(rect.top), 
+                        width: Math.round(rect.width), 
+                        height: Math.round(rect.height), 
+                        retryInterval: 5000 
+                    });
+                    if (capturedGeneration !== currentAdGeneration || requestedNativeAdId !== elementId) {
+                        try { if (typeof AdPlugin.hideNativeAd === "function") await AdPlugin.hideNativeAd(); } catch (_) {}
+                        return;
+                    }
+                    activeNativeAdId = elementId;
+                } catch (error) {}
+            });
+            await nativeAdOperation;
+        }
+
+        function initializeNativeAdObserver() {
+            if (nativeAdObserverStarted) return;
+            nativeAdObserverStarted = true;
+            window.nativeAdObserver = new IntersectionObserver((entries) => {
+                const AdPlugin = getAdMobPlugin();
+                if (!isNativeApp() || !AdPlugin || !window.globalAdConfig?.nativeId) return;
+                const visibleEntries = entries.filter(entry => entry.isIntersecting && entry.target && entry.target.id);
+                if (visibleEntries.length > 0) {
+                    const element = visibleEntries[visibleEntries.length - 1].target;
+                    requestedNativeAdId = element.id;
+                    showNativeAdForSlot(element);
+                    return;
+                }
+                entries.forEach(entry => {
+                    const element = entry.target;
+                    if (!element || !element.id) return;
+                    if (!entry.isIntersecting && activeNativeAdId === element.id) {
+                        requestedNativeAdId = null;
+                        nativeAdOperation = nativeAdOperation.then(async () => {
+                            if (requestedNativeAdId) return;
+                            await hideCurrentNativeAd();
+                        });
+                    }
+                });
+            }, { root: null, rootMargin: "0px", threshold: 0.1 });
+        }
+
+        async function clearActiveFeedAds() {
+            currentAdGeneration++;
+            requestedNativeAdId = null;
+            if (window.nativeAdObserver) { window.nativeAdObserver.disconnect(); window.nativeAdObserver = null; }
+            nativeAdObserverStarted = false;
+            await hideCurrentNativeAd();
+        }
+
+        function restoreNativeAdIfApplicable() {
+            if (isNativeApp() && !isOpeningArticle) {
+                const adPlaceholder = document.getElementById('native-feed-ad-sticky');
+                if (adPlaceholder) showNativeAdForSlot(adPlaceholder);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            streamLiveAdminUpdatesLog(); 
+            setupSearchEngineControls(); 
+            initiateLiveInterfaceClocks(); 
+            setupAppResumeAdListener(); 
+            setupScrollAdReloadLogic();
+            setupEventDelegation();
+            fetchAdMobUnits(); 
+            
+            const closeBtn = document.getElementById("closePopupBtn");
+            if (closeBtn) closeBtn.addEventListener("click", () => {
+                const popup = document.getElementById("customPopupModule");
+                if (popup) popup.classList.remove("show-popup");
+                restoreNativeAdIfApplicable();
+            });
         });
 
-        function getYouTubeEmbedUrl(url) {
-            if (!url) return null;
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = String(url).trim().match(regExp);
-            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        function fetchAdMobUnits() {
+            onValue(ref(db, `${APP_NODE_NAME}/adManager`), async snapshot => {
+                if (!snapshot.exists()) { onGlobalAppOpenAdClosed(); return; }
+                const adData = snapshot.val();
+                window.globalAdConfig = { status: String(adData.adStatus).toUpperCase() === "TRUE" || String(adData.adStatus).toUpperCase() === "ON", bannerId: adData.adMobBannerUnitId, interstitialId: adData.adMobInterstitialUnitId, nativeId: adData.adMobNativeUnitId, appOpenId: adData.adMobAppOpenUnitId, placements: adData.placements || {} };
+                
+                if (!window.globalAdConfig.status) { onGlobalAppOpenAdClosed(); return; }
+
+                // Manage Static Native Ad container visibility
+                const staticNativeAdContainer = document.getElementById('staticNativeAdContainer');
+
+                if (window.globalAdConfig.placements?.nativeAdPostList && window.globalAdConfig.nativeId && isNativeApp() && getAdMobPlugin()) {
+                    if (staticNativeAdContainer) {
+                        // Leave it visible and start observing for the AdMob plugin
+                        initializeNativeAdObserver();
+                        const adPlaceholderNode = document.getElementById('native-feed-ad-sticky');
+                        if (window.nativeAdObserver && adPlaceholderNode) {
+                            window.nativeAdObserver.observe(adPlaceholderNode);
+                        }
+                    }
+                } else {
+                    // Hide the placeholder if ads are disabled or if running in a standard web browser
+                    if (staticNativeAdContainer) {
+                        staticNativeAdContainer.style.display = 'none';
+                    }
+                }
+
+                const AdPlugin = getAdMobPlugin();
+                if (isNativeApp() && AdPlugin) {
+                    try {
+                        if (typeof AdPlugin.requestConsentInfo === "function") await AdPlugin.requestConsentInfo({ showFormIfRequired: true });
+                        if (typeof AdPlugin.initialize === "function") await AdPlugin.initialize({ isTesting: true });
+                        
+                        if (AdPlugin.addListener && !window.adEventsBound) {
+                            window.adEventsBound = true;
+                            AdPlugin.addListener('appOpenAdDismissed', onGlobalAppOpenAdClosed);
+                            AdPlugin.addListener('appOpenAdFailedToShow', onGlobalAppOpenAdClosed);
+                        }
+
+                        if (!isSessionAlreadyStarted) {
+                            const failsafe = setTimeout(() => { onGlobalAppOpenAdClosed(); }, 5000);
+                            await AdPlugin.loadAppOpen({ adUnitId: window.globalAdConfig.appOpenId });
+                            
+                            clearSplashImageForAd(); 
+                            await AdPlugin.showAppOpen();
+                        } else {
+                            onGlobalAppOpenAdClosed();
+                        }
+                    } catch (e) { onGlobalAppOpenAdClosed(); }
+                } else {
+                    onGlobalAppOpenAdClosed();
+                }
+            }, { onlyOnce: true });
+        }
+
+        // --- APP RESUME AD TRIGGER (MODIFIED TO NOT SHOW SPLASH) ---
+        function setupAppResumeAdListener() {
+            document.addEventListener("visibilitychange", async () => {
+                if (document.visibilityState !== "visible") return;
+                
+                if (window.globalAdConfig?.status && window.globalAdConfig?.placements?.appOpenAdResume && window.globalAdConfig?.appOpenId) {
+                    const AdPlugin = getAdMobPlugin();
+                    if (isNativeApp() && AdPlugin) {
+                        try { if (AdPlugin.hideBanner) await AdPlugin.hideBanner(); } catch(e){}
+                        await hideCurrentNativeAd();
+                        
+                        // We intentionally DO NOT show the splash overlay here anymore. 
+                        isHandlingResumeAd = true;
+                        
+                        const failsafe = setTimeout(() => {
+                            onGlobalAppOpenAdClosed();
+                        }, 5000); 
+
+                        try {
+                            await AdPlugin.loadAppOpen({ adUnitId: window.globalAdConfig.appOpenId });
+                            await AdPlugin.showAppOpen();
+                        } catch (e) {
+                            clearTimeout(failsafe);
+                            onGlobalAppOpenAdClosed();
+                        }
+                    }
+                }
+            });
+        }
+
+        async function triggerBannerAdHomePage() {
+            const adWrapper = document.getElementById("adContainerWrapper");
+            if (!window.globalAdConfig?.placements?.bannerAdHomePage || !window.globalAdConfig?.bannerId) {
+                if (isNativeApp()) {
+                    const AdPlugin = getAdMobPlugin();
+                    if (AdPlugin?.hideBanner) await AdPlugin.hideBanner().catch(() => {});
+                } else if (adWrapper) { adWrapper.style.display = "none"; }
+                return;
+            }
+            const AdPlugin = getAdMobPlugin();
+            if (isNativeApp() && AdPlugin) {
+                try {
+                    if (!bannerCreated) {
+                        await AdPlugin.createBanner({ 
+                            adUnitId: window.globalAdConfig.bannerId, 
+                            isAutoShow: true, 
+                            position: "BOTTOM", 
+                            adSize: "ADAPTIVE_BANNER", 
+                            isOverlapping: true 
+                        });
+                        bannerCreated = true;
+                    } else if (AdPlugin.showBanner) { await AdPlugin.showBanner(); }
+                } catch (e) {}
+            } else if (adWrapper) {
+                adWrapper.style.display = "flex";
+                const preview = document.getElementById("admobPreviewBanner");
+                if (preview) preview.innerHTML = `Home Banner Ad<br><span style="font-size:10px;">DB ID: ${window.globalAdConfig.bannerId}</span>`;
+            }
+        }
+
+        function showInterstitialAdMock(onAdClosedCallback) {
+            const AdPlugin = getAdMobPlugin();
+            if (window.globalAdConfig?.placements?.interstitialAdPostDetails && window.globalAdConfig?.interstitialId) {
+                if (isNativeApp() && AdPlugin) {
+                    triggerUiPopup("⏳", "Loading Content", "Please wait while we prepare the article...");
+                    const closeBtn = document.getElementById("closePopupBtn");
+                    if (closeBtn) closeBtn.style.display = "none";
+                    (async () => {
+                        try {
+                            await AdPlugin.loadInterstitial({ adUnitId: window.globalAdConfig.interstitialId });
+                            const popup = document.getElementById("customPopupModule");
+                            if (popup) popup.classList.remove("show-popup");
+                            if (closeBtn) closeBtn.style.display = "block";
+                            await AdPlugin.showInterstitial();
+                            onAdClosedCallback();
+                        } catch (e) {
+                            const popup = document.getElementById("customPopupModule");
+                            if (popup) popup.classList.remove("show-popup");
+                            if (closeBtn) closeBtn.style.display = "block";
+                            onAdClosedCallback();
+                        }
+                    })();
+                } else {
+                    const mockModal = document.getElementById("mockInterstitialModal");
+                    const idLabel = document.getElementById("mockInterstitialIdText");
+                    const closeBtn = document.getElementById("closeMockInterstitialBtn");
+                    const continueBtn = document.getElementById("mockInterstitialContinueBtn");
+                    if (idLabel) idLabel.innerText = `ID: ${window.globalAdConfig.interstitialId}`;
+                    if (mockModal) mockModal.classList.add("active");
+                    const dismissMockAd = () => {
+                        if (mockModal) mockModal.classList.remove("active");
+                        if (closeBtn) closeBtn.removeEventListener("click", dismissMockAd);
+                        if (continueBtn) continueBtn.removeEventListener("click", dismissMockAd);
+                        onAdClosedCallback();
+                    };
+                    if (closeBtn) closeBtn.addEventListener("click", dismissMockAd);
+                    if (continueBtn) continueBtn.addEventListener("click", dismissMockAd);
+                }
+            } else { onAdClosedCallback(); }
         }
 
         function initiateLiveInterfaceClocks() {
-            const cornerClockNode = document.getElementById('topCornerLiveClock');
-            
-            if (cardClockIntervalId) clearInterval(cardClockIntervalId);
-            cardClockIntervalId = setInterval(() => {
-                const now = new Date();
-                
-                if (cornerClockNode) {
-                    cornerClockNode.innerText = now.toLocaleTimeString(undefined, {
-                        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-                    });
-                }
-
-                const clockNodes = document.querySelectorAll('.timestamp-log-text[data-timestamp]');
-                clockNodes.forEach(node => {
-                    const rawTime = parseInt(node.getAttribute('data-timestamp'));
-                    if (rawTime && !isNaN(rawTime)) {
-                        node.innerText = formatExactTimestampWithSeconds(rawTime);
-                    }
+            setInterval(() => {
+                document.querySelectorAll(".timestamp-log-text[data-timestamp]").forEach(node => {
+                    const rawTime = parseInt(node.getAttribute("data-timestamp"));
+                    if (rawTime) node.innerText = formatExactTimestampWithSeconds(rawTime);
                 });
             }, 1000);
         }
@@ -305,393 +792,222 @@
         function formatExactTimestampWithSeconds(baseEpoch) {
             const dateObj = new Date(baseEpoch);
             if (isNaN(dateObj.getTime())) return "Recent";
-            return dateObj.toLocaleDateString(undefined, { 
-                month: 'short', day: 'numeric', year: 'numeric' 
-            }) + ' • ' + dateObj.toLocaleTimeString(undefined, { 
-                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-            });
+            return dateObj.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + " • " + dateObj.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
         }
 
         function extractValidTimestamp(item) {
             const raw = item.timestamp || item.updatedAt || item.createdAtTimestamp || item.createdAt || item.date;
-
-            if (typeof raw === 'number' && !isNaN(raw)) {
-                return raw;
-            }
-            if (typeof raw === 'string') {
+            if (typeof raw === "number" && !isNaN(raw)) return raw;
+            if (typeof raw === "string") {
                 const parsed = parseInt(raw, 10);
-                if (!isNaN(parsed) && parsed > 1000000000) {
-                    return parsed < 100000000000 ? parsed * 1000 : parsed;
-                }
+                if (!isNaN(parsed) && parsed > 1000000000) return (parsed < 100000000000) ? parsed * 1000 : parsed;
                 const dateParsed = new Date(raw).getTime();
-                if (!isNaN(dateParsed)) {
-                    return dateParsed;
-                }
+                if (!isNaN(dateParsed)) return dateParsed;
             }
             return Date.now();
         }
 
         function rebuildAndRenderBroadcastsCache() {
             localCachedBroadcasts = [];
-
-            // Shikela Update node
-            Object.keys(rawShikelaNewsData).forEach(key => {
-                const item = rawShikelaNewsData[key];
-                if (typeof item === 'object' && item !== null) {
-                    localCachedBroadcasts.push({
-                        id: key,
-                        _dbPath: 'shikelaNews',
-                        ...item,
-                        title: item.title || item.newsTitle || "Shikela Update",
-                        category: item.category || "Shikela Update",
-                        resolvedTimestamp: extractValidTimestamp(item)
-                    });
-                }
-            });
-
-            // Shikela Tips node
-            Object.keys(rawNewNewsData).forEach(key => {
-                const item = rawNewNewsData[key];
-                if (typeof item === 'object' && item !== null) {
-                    localCachedBroadcasts.push({
-                        id: key,
-                        _dbPath: 'newNews',
-                        ...item,
-                        title: item.title || item.newsTitle || "Shikela Tip",
-                        category: item.category || "Shikela Tips",
-                        resolvedTimestamp: extractValidTimestamp(item)
-                    });
-                }
-            });
-
-            // Sort newest first
+            const addNode = (dataObj, defaultCat) => {
+                Object.keys(dataObj).forEach(key => {
+                    const item = dataObj[key];
+                    if (typeof item === "object" && item !== null) {
+                        let resolvedCategory = (item.category || defaultCat).replace(/Shikela/gi, "Mahara Pro");
+                        localCachedBroadcasts.push({ id: key, ...item, title: item.title || item.newsTitle || resolvedCategory, category: resolvedCategory, resolvedTimestamp: extractValidTimestamp(item) });
+                    }
+                });
+            };
+            addNode(rawShikelaNewsData, "Mahara Pro Update");
+            addNode(rawNewNewsData, "Mahara Pro Tips");
             localCachedBroadcasts.sort((a, b) => b.resolvedTimestamp - a.resolvedTimestamp);
-
-            renderFilteredBroadcasts();
+            
+            if (appIsReadyForContent) {
+                renderFilteredBroadcasts();
+            }
         }
 
         function streamLiveAdminUpdatesLog() {
-            const shikelaNewsRef = ref(db, `${APP_NODE_NAME}/shikelaNews`);
-            const newNewsRef = ref(db, `${APP_NODE_NAME}/newNews`);
-
-            onValue(shikelaNewsRef, (snapshot) => {
-                rawShikelaNewsData = snapshot.exists() ? snapshot.val() : {};
-                rebuildAndRenderBroadcastsCache();
-            }, (error) => {
-                console.error("Firebase read error (shikelaNews):", error);
-            });
-
-            onValue(newNewsRef, (snapshot) => {
-                rawNewNewsData = snapshot.exists() ? snapshot.val() : {};
-                rebuildAndRenderBroadcastsCache();
-            }, (error) => {
-                console.error("Firebase read error (newNews):", error);
-            });
+            onValue(ref(db, `${APP_NODE_NAME}/shikelaNews`), snapshot => { rawShikelaNewsData = snapshot.exists() ? snapshot.val() : {}; rebuildAndRenderBroadcastsCache(); });
+            onValue(ref(db, `${APP_NODE_NAME}/newNews`), snapshot => { rawNewNewsData = snapshot.exists() ? snapshot.val() : {}; rebuildAndRenderBroadcastsCache(); });
         }
-
-        function renderEmptyState() {
-            const container = document.getElementById('broadcastsContainer');
-            if (!container) return;
-            
-            // Minor update: Ensure user sees "Mahara Pro" in empty state even when filtering by "Shikela"
-            const displayFilter = currentActiveCategoryFilter.replace('Shikela', 'Mahara Pro');
-            
-            container.innerHTML = `
-                <article class="featured-broadcast-card">
-                    <div class="badge-meta-row"><span class="spotlight-pill">Mahara Pro Network</span></div>
-                    <h2 class="broadcast-title">All Systems Nominal</h2>
-                    <p class="broadcast-body-text">There are no updates or notices posted under <strong>${displayFilter}</strong> today.</p>
-                </article>
-            `;
-        }
-
-        window.duplicateAsAdmin = async function(itemId) {
-            const sourceItem = localCachedBroadcasts.find(n => n.id === itemId);
-            if (!sourceItem) {
-                triggerUiPopup("⚠️", "Error", "Target article to duplicate was not found.");
-                return;
-            }
-
-            try {
-                const clonedPayload = { ...sourceItem };
-                const targetNodePath = clonedPayload._dbPath || `shikelaNews`;
-                
-                delete clonedPayload.id;
-                delete clonedPayload._dbPath;
-                delete clonedPayload.resolvedTimestamp;
-
-                const now = Date.now();
-                clonedPayload.createdAtTimestamp = now;
-                clonedPayload.updatedAt = now;
-                clonedPayload.timestamp = now;
-                
-                const currentTitle = clonedPayload.title || clonedPayload.newsTitle || "Untitled";
-                clonedPayload.title = `${currentTitle} (Copy)`;
-
-                const currentCode = clonedPayload.newsCode || clonedPayload.code || "";
-                if (currentCode) {
-                    clonedPayload.newsCode = `${currentCode}_COPY`;
-                }
-
-                const nodeRef = ref(db, `${APP_NODE_NAME}/${targetNodePath}`);
-                const newRef = push(nodeRef);
-                await set(newRef, clonedPayload);
-
-                triggerUiPopup("✅", "Article Duplicated", `Successfully duplicated item into ${APP_NODE_NAME}/${targetNodePath}.`);
-            } catch (err) {
-                console.error("Duplication failed:", err);
-                triggerUiPopup("❌", "Duplication Error", "Failed to duplicate item into database.");
-            }
-        };
 
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || item.newsTitle || "Mahara Pro Update";
             const fullContent = item.content || item.message || "";
-            // Maps category to replace Shikela with Mahara Pro for display pills only.
-            const displayCategory = (item.category || "Mahara Pro Update").replace('Shikela', 'Mahara Pro'); 
-            const category = item.category || "Shikela Update";
+            const displayCategory = item.category || "Mahara Pro Update";
             const imageUrl = item.imageUrl || item.image || "";
-
-            const maxPreviewLen = 120;
-            const isLongText = fullContent.length > maxPreviewLen;
-            const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
-
+            const previewContent = fullContent.length > 120 ? fullContent.substring(0, 120).trim() + "..." : fullContent;
             const numericalTime = item.resolvedTimestamp || Date.now();
-            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
+            const pillBadgeClass = displayCategory.toLowerCase().includes("tips") ? "spotlight-pill system-badge" : "spotlight-pill";
+            let imageHTML = imageUrl ? `<div class="broadcast-image-frame" data-id="${escapeHTML(item.id)}"><img src="${escapeHTML(imageUrl)}" onload="this.classList.add('loaded')" onerror="this.parentElement.style.display='none'"></div>` : "";
             
-            const isTips = category.trim().toLowerCase().includes("tips");
-            const pillBadgeClass = isTips ? "spotlight-pill system-badge" : "spotlight-pill";
-
-            let imageHTML = "";
-            if (imageUrl && imageUrl.trim().length > 0) {
-                imageHTML = `<div class="broadcast-image-frame" onclick="openFullNewsReader('${item.id}')"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
-            }
-
-            let adminBtnHTML = "";
-            if (isAdminMode) {
-                adminBtnHTML = `
-                    <div class="admin-action-row">
-                        <button class="admin-duplicate-btn" onclick="duplicateAsAdmin('${item.id}')">📋 Duplicate Post</button>
-                    </div>
-                `;
-            }
-
             return `
-                ${adminBtnHTML}
                 <div class="badge-meta-row">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}" style="text-transform: uppercase;">${displayCategory}</span>
-                    </div>
-                    <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
+                    <div style="display:flex; align-items:center; gap:6px;"><span class="${pillBadgeClass}">${escapeHTML(displayCategory)}</span></div>
+                    <span class="timestamp-log-text" data-timestamp="${numericalTime}"></span>
                 </div>
                 ${imageHTML}
-                <div class="clickable-news-content" onclick="openFullNewsReader('${item.id}')">
-                    <h2 class="broadcast-title">${headline}</h2>
-                    <p class="broadcast-body-text">${previewContent}</p>
+                <div class="clickable-news-content" data-id="${escapeHTML(item.id)}">
+                    <h2 class="broadcast-title">${escapeHTML(headline)}</h2>
+                    <p class="broadcast-body-text">${escapeHTML(previewContent)}</p>
                 </div>
             `;
+        }
+
+        function setupEventDelegation() {
+            const handleNewsClick = (e) => {
+                const target = e.target.closest('.clickable-news-content, .broadcast-image-frame');
+                if (target && target.dataset.id) {
+                    window.openFullNewsReader(target.dataset.id);
+                }
+            };
+            const mainContent = document.getElementById("mainContentArea");
+            const searchResults = document.getElementById("searchResultsArea");
+            
+            if (mainContent) mainContent.addEventListener("click", handleNewsClick);
+            if (searchResults) searchResults.addEventListener("click", handleNewsClick);
         }
 
         window.openFullNewsReader = function(itemId) {
+            if (isOpeningArticle) return;
+            isOpeningArticle = true;
+
             const item = localCachedBroadcasts.find(n => n.id === itemId);
-            if (!item) return;
+            if (!item) { isOpeningArticle = false; return; }
 
-            const readerOverlay = document.getElementById('fullNewsModalOverlay');
-            const readerBody = document.getElementById('fullNewsReaderBody');
+            showInterstitialAdMock(async () => {
+                const AdPlugin = getAdMobPlugin();
+                if (isNativeApp() && AdPlugin && AdPlugin.hideBanner) await AdPlugin.hideBanner().catch(e => console.log(e));
+                
+                // Do not clear the static native ad observer entirely, just hide active
+                await hideCurrentNativeAd();
 
-            if (!readerOverlay || !readerBody) return;
-
-            const headline = item.title || item.newsTitle || "Mahara Pro Update";
-            const fullContent = item.content || item.message || "";
-            // Replace Shikela with Mahara Pro for the pill inside the reader
-            const displayCategory = (item.category || "Mahara Pro Update").replace('Shikela', 'Mahara Pro');
-            const category = item.category || "Shikela Update";
-            const imageUrl = item.imageUrl || item.image || "";
-            const videoUrl = item.videoUrl || item.youtubeUrl || item.youtubeId || item.video || "";
-            
-            const isDuplicateActive = Boolean(item.duplicateCoverInArticle ?? item.duplicateImageInArticle ?? item.duplicateImage ?? true);
-            
-            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
-            const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
-
-            const numericalTime = item.resolvedTimestamp || Date.now();
-            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isTips = category.trim().toLowerCase().includes("tips");
-            const pillBadgeClass = isTips ? "spotlight-pill system-badge" : "spotlight-pill";
-
-            let imageHTML = "";
-            if (imageUrl && imageUrl.trim().length > 0 && isDuplicateActive) {
-                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl.trim()}" alt="${headline}"></div>`;
-            }
-
-            let videoHTML = "";
-            const embedUrl = getYouTubeEmbedUrl(videoUrl);
-            if (embedUrl) {
-                videoHTML = `
-                    <div class="reader-video-container">
-                        <iframe src="${embedUrl}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                    </div>
-                `;
-            }
-
-            let redirectBtnHTML = "";
-            if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
-                redirectBtnHTML = `
-                    <div style="margin-top:20px;">
-                        <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn" style="width:100%; justify-content:center;">
-                            <span>${customActionLabel}</span>
-                            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        </a>
-                    </div>
-                `;
-            }
-
-            let adminDuplicateBtnReader = "";
-            if (isAdminMode) {
-                adminDuplicateBtnReader = `
-                    <button class="admin-duplicate-btn" style="margin-bottom: 12px; width: 100%;" onclick="duplicateAsAdmin('${item.id}')">📋 Duplicate Article Entry</button>
-                `;
-            }
-
-            readerBody.innerHTML = `
-                ${adminDuplicateBtnReader}
-                <div class="reader-meta-bar">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}" style="text-transform: uppercase;">${displayCategory}</span>
-                    </div>
-                    <span class="timestamp-log-text">${initialFormattedClock}</span>
-                </div>
-                <h1 class="reader-title">${headline}</h1>
-                ${imageHTML}
-                ${videoHTML}
-                <div class="reader-full-body">${fullContent}</div>
-                ${redirectBtnHTML}
-            `;
-
-            readerOverlay.classList.add('active-reader');
+                sessionStorage.setItem('shikela_current_article', JSON.stringify(item));
+                
+                const targetUrl = isAdminMode ? 'article.html?admin=true' : 'article.html';
+                window.location.href = targetUrl;
+                
+                isOpeningArticle = false;
+            });
         };
 
-        function setupNewsReaderModalControls() {
-            const closeBtn = document.getElementById('closeNewsReaderBtn');
-            const readerOverlay = document.getElementById('fullNewsModalOverlay');
+        function setupScrollAdReloadLogic() {
+            let lastRefreshCount = 0;
+            let scrollTimeout;
+            const contentArea = document.getElementById("mainContentArea");
+            if (!contentArea) return;
 
-            if (closeBtn && readerOverlay) {
-                closeBtn.addEventListener('click', () => {
-                    readerOverlay.classList.remove('active-reader');
-                });
-            }
+            contentArea.addEventListener('scroll', () => {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(() => {
+                    if (contentArea.scrollTop + contentArea.clientHeight >= contentArea.scrollHeight - 250) {
+                        loadNextBatchOfItems();
+                    }
+
+                    const cards = document.querySelectorAll('.featured-broadcast-card:not(.native-ad-wrapper)');
+                    let passedCount = 0;
+                    const stickyAd = document.querySelector('.sticky-ad-container');
+                    const adBottom = stickyAd ? stickyAd.getBoundingClientRect().bottom : 150;
+
+                    cards.forEach(card => {
+                        if (card.getBoundingClientRect().top < adBottom) {
+                            passedCount++;
+                        }
+                    });
+
+                    if (passedCount >= lastRefreshCount + 3) {
+                        lastRefreshCount = passedCount - (passedCount % 3); 
+                        const adPlaceholder = document.getElementById('native-feed-ad-sticky');
+                        if (adPlaceholder && isNativeApp() && getAdMobPlugin() && window.globalAdConfig?.nativeId) {
+                             showNativeAdForSlot(adPlaceholder);
+                        }
+                    }
+                    scrollTimeout = null;
+                }, 200); 
+            });
         }
 
-        function renderFilteredBroadcasts() {
-            const container = document.getElementById('broadcastsContainer');
+        function loadNextBatchOfItems() {
+            if (isRenderingBatch) return;
+            const container = document.getElementById("broadcastsContainer");
+            if (!container) return;
+
+            const startIndex = currentPage * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const itemsToRender = localCachedBroadcasts.slice(startIndex, endIndex);
+
+            if (itemsToRender.length === 0) {
+                document.getElementById("endOfListShield").style.display = "flex";
+                return; 
+            }
+
+            isRenderingBatch = true;
+            
+            const fragment = document.createDocumentFragment();
+            itemsToRender.forEach(item => {
+                const card = document.createElement("article");
+                card.className = "featured-broadcast-card";
+                card.innerHTML = buildSingleNewsCardHTML(item);
+                fragment.appendChild(card);
+            });
+
+            container.appendChild(fragment);
+            currentPage++;
+            isRenderingBatch = false;
+        }
+
+        async function renderFilteredBroadcasts() {
+            if (!appIsReadyForContent) return;
+            
+            const container = document.getElementById("broadcastsContainer");
             if (!container) return;
             
             container.innerHTML = "";
-
-            const filtered = localCachedBroadcasts.filter(item => {
-                const nodeCategory = (item.category || "").trim().toLowerCase();
-                const targetFilter = currentActiveCategoryFilter.trim().toLowerCase();
-                return nodeCategory === targetFilter;
-            });
-
-            if (filtered.length === 0) {
-                renderEmptyState();
+            currentPage = 0;
+            document.getElementById("endOfListShield").style.display = "none";
+            
+            if (localCachedBroadcasts.length === 0) {
+                container.innerHTML = `<article class="featured-broadcast-card"><h2 class="broadcast-title">No updates posted today.</h2></article>`;
                 return;
             }
 
-            filtered.forEach((item) => {
-                const card = document.createElement('article');
-                card.className = "featured-broadcast-card";
-                card.innerHTML = buildSingleNewsCardHTML(item);
-                container.appendChild(card);
-            });
-        }
-
-        function bindVisualInterfaceControls() {
-            const pills = document.querySelectorAll('.filter-btn, .filter-pill');
-
-            pills.forEach(pill => {
-                pill.addEventListener('click', function() {
-                    pills.forEach(p => {
-                        p.classList.remove('active-pill');
-                        p.classList.remove('active');
-                    });
-                    this.classList.add('active-pill');
-                    this.classList.add('active');
-                    
-                    // Defaults back to "Shikela Update" so the underlying logic matches DB structure
-                    currentActiveCategoryFilter = this.getAttribute('data-filter') || this.getAttribute('data-category') || "Shikela Update";
-
-                    renderFilteredBroadcasts();
-                });
-            });
+            loadNextBatchOfItems();
         }
 
         function setupSearchEngineControls() {
-            const openBtn = document.getElementById('openSearchBtn');
-            const closeBtn = document.getElementById('closeSearchDrawerBtn');
-            const searchOverlay = document.getElementById('searchModalOverlay');
-            const searchInput = document.getElementById('newsCodeSearchInput');
-
-            if (openBtn && searchOverlay) {
-                openBtn.addEventListener('click', () => {
-                    searchOverlay.classList.add('active-search');
-                    if (searchInput) {
-                        searchInput.value = '';
-                        searchInput.focus();
-                    }
-                    executeNewsSearchQuery('');
-                });
-            }
-
-            if (closeBtn && searchOverlay) {
-                closeBtn.addEventListener('click', () => {
-                    searchOverlay.classList.remove('active-search');
-                });
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    executeNewsSearchQuery(e.target.value);
-                });
-            }
+            const openBtn = document.getElementById("openSearchBtn"), closeBtn = document.getElementById("closeSearchDrawerBtn"), searchOverlay = document.getElementById("searchModalOverlay"), searchInput = document.getElementById("newsCodeSearchInput");
+            if (openBtn) openBtn.addEventListener("click", () => { 
+                searchOverlay.classList.add("active-search"); 
+                if (isNativeApp()) hideCurrentNativeAd();
+                if (searchInput) { searchInput.value = ""; searchInput.focus(); executeNewsSearchQuery(""); } 
+            });
+            if (closeBtn) closeBtn.addEventListener("click", () => {
+                searchOverlay.classList.remove("active-search");
+                restoreNativeAdIfApplicable();
+            });
+            if (searchInput) searchInput.addEventListener("input", e => executeNewsSearchQuery(e.target.value));
         }
 
         function executeNewsSearchQuery(query) {
-            const resultsArea = document.getElementById('searchResultsArea');
+            const resultsArea = document.getElementById("searchResultsArea");
             if (!resultsArea) return;
-
             const cleanQuery = query.trim().toLowerCase();
-
-            if (!cleanQuery) {
-                resultsArea.innerHTML = `
-                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
-                        Type a post code above to find updates quickly.
-                    </div>
-                `;
-                return;
-            }
-
+            if (!cleanQuery) { resultsArea.innerHTML = `<div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">Type any word or code above to search all posts.</div>`; return; }
+            
             const matchedNews = localCachedBroadcasts.filter(item => {
-                const code = String(item.newsCode || item.code || item.id || '').toLowerCase();
-                const title = String(item.title || item.newsTitle || '').toLowerCase();
-                const content = String(item.content || item.message || '').toLowerCase();
-
-                return code.includes(cleanQuery) || title.includes(cleanQuery) || content.includes(cleanQuery);
+                const code = String(item.newsCode || item.code || item.id || "").toLowerCase();
+                const title = String(item.title || item.newsTitle || "").toLowerCase();
+                const content = String(item.content || item.message || "").toLowerCase();
+                const cat = String(item.category || "").toLowerCase();
+                return code.includes(cleanQuery) || title.includes(cleanQuery) || content.includes(cleanQuery) || cat.includes(cleanQuery);
             });
 
-            if (matchedNews.length === 0) {
-                resultsArea.innerHTML = `
-                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
-                        No updates matching "<strong>${cleanQuery}</strong>" found.
-                    </div>
-                `;
-                return;
-            }
-
-            resultsArea.innerHTML = '';
-            matchedNews.forEach((item) => {
-                const card = document.createElement('article');
+            if (matchedNews.length === 0) { resultsArea.innerHTML = `<div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">No updates matching "<strong>${escapeHTML(cleanQuery)}</strong>" found.</div>`; return; }
+            
+            resultsArea.innerHTML = "";
+            matchedNews.forEach(item => {
+                const card = document.createElement("article");
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 resultsArea.appendChild(card);
@@ -699,41 +1015,42 @@
         }
 
         function triggerUiPopup(icon, title, desc) {
-            const overlay = document.getElementById('customPopupModule');
-            const iconNode = document.getElementById('popupIconNode');
-            const titleNode = document.getElementById('popupTitleNode');
-            const descNode = document.getElementById('popupDescNode');
-            const dismissBtn = document.getElementById('closePopupBtn');
-            
-            if (overlay && iconNode && titleNode && descNode) {
-                if (dismissBtn) {
-                    dismissBtn.innerText = "Continue";
-                    dismissBtn.onclick = () => overlay.classList.remove('show-popup');
-                }
-
-                iconNode.innerText = icon;
-                iconNode.style.display = "inline-block";
-                titleNode.innerText = title;
-                descNode.innerText = desc;
-                overlay.classList.add('show-popup');
-            }
+            const overlay = document.getElementById("customPopupModule");
+            if (!overlay) return;
+            if (isNativeApp()) hideCurrentNativeAd();
+            document.getElementById("popupIconNode").innerText = icon;
+            document.getElementById("popupTitleNode").innerText = title;
+            document.getElementById("popupDescNode").innerText = desc;
+            overlay.classList.add("show-popup");
         }
     </script>
-
-    <!-- Script to manage iframe drawer toggling -->
     <script>
-        const openBtn = document.getElementById('openMenuIframeBtn');
-        const overlay = document.getElementById('menuIframeOverlay');
-        const iframe = document.getElementById('menuIframe');
-
-        openBtn.addEventListener('click', () => {
-            iframe.src = 'menu.html';
-            overlay.classList.add('active');
-        });
-
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                overlay.classList.remove('active');
+        document.addEventListener("DOMContentLoaded", () => {
+            const openBtn = document.getElementById("openMenuIframeBtn"), overlay = document.getElementById("menuIframeOverlay"), iframe = document.getElementById("menuIframe");
+            if (openBtn && overlay && iframe) {
+                openBtn.addEventListener("click", () => { 
+                    iframe.src = "menu.html"; 
+                    overlay.classList.add("active"); 
+                    if (typeof window.AdMobPlugin !== 'undefined' && window.Capacitor?.isNativePlatform?.()) {
+                        window.AdMobPlugin.hideNativeAd().catch(()=>{});
+                    }
+                });
+                overlay.addEventListener("click", e => { 
+                    if (e.target === overlay) {
+                        overlay.classList.remove("active");
+                        if (typeof window.AdMobPlugin !== 'undefined' && window.Capacitor?.isNativePlatform?.()) {
+                            const adPlaceholder = document.getElementById('native-feed-ad-sticky');
+                            if (adPlaceholder) {
+                                const rect = adPlaceholder.getBoundingClientRect();
+                                window.AdMobPlugin.showNativeAd({
+                                    adId: adPlaceholder.id, adUnitId: window.globalAdConfig.nativeId, 
+                                    template: "small", x: Math.round(rect.left), y: Math.round(rect.top), 
+                                    width: Math.round(rect.width), height: Math.round(rect.height)
+                                }).catch(()=>{});
+                            }
+                        }
+                    }
+                });
             }
         });
     </script>
