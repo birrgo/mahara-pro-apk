@@ -1,4 +1,4 @@
-Name: Convert PWA to Release AAB (Mahara Pro)
+name: Convert PWA to Release AAB (Mahara Pro)
 
 on:
   push:
