@@ -1,4 +1,4 @@
-name: Convert PWA to Release AAB (Mahara Pro)
+Name: Convert PWA to Release AAB (Mahara Pro)
 
 on:
   push:
@@ -11,6 +11,8 @@ env:
   PACKAGE_NAME: "com.maharapro.app"
   # Replace with the actual AdMob App ID for Mahara Pro if different
   ADMOB_APP_ID: "ca-app-pub-1118823918279022~3890936630" 
+  # --- EDIT APP VERSION HERE ---
+  APP_VERSION: "1.0.4"
 
 jobs:
   build:
@@ -27,7 +29,8 @@ jobs:
       - name: Install Dependencies & Esbuild
         run: |
           if [ ! -f package.json ]; then npm init -y; fi
-          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/splash-screen@8 capacitor-admob-nextgen@1.2.9 @onesignal/capacitor-plugin esbuild
+          # Added @capacitor/app and @capacitor/network for Back Button and Offline functionality
+          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/splash-screen@8 @capacitor/app@8 @capacitor/network@8 capacitor-admob-nextgen@1.2.9 @onesignal/capacitor-plugin esbuild
 
       - name: Initialize AdMob SDK Variables
         run: |
@@ -47,12 +50,69 @@ jobs:
           mkdir -p www
           rsync -av --exclude='.git' --exclude='.github' --exclude='www' --exclude='node_modules' ./ www/
 
-          echo "import { Capacitor } from '@capacitor/core';" > bridge.js
-          echo "import { AdMobNextGen } from 'capacitor-admob-nextgen';" >> bridge.js
-          echo "import OneSignalPlugin from '@onesignal/capacitor-plugin';" >> bridge.js
-          echo "window.Capacitor = Capacitor;" >> bridge.js
-          echo "window.AdMobPlugin = AdMobNextGen;" >> bridge.js
-          echo "window.OneSignal = OneSignalPlugin.default || OneSignalPlugin;" >> bridge.js
+          # Create Native Bridge JS with Back Button and Offline Logic
+          cat << 'EOF' > bridge.js
+          import { Capacitor } from '@capacitor/core';
+          import { AdMobNextGen } from 'capacitor-admob-nextgen';
+          import OneSignalPlugin from '@onesignal/capacitor-plugin';
+          import { App } from '@capacitor/app';
+          import { Network } from '@capacitor/network';
+
+          window.Capacitor = Capacitor;
+          window.AdMobPlugin = AdMobNextGen;
+          window.OneSignal = OneSignalPlugin.default || OneSignalPlugin;
+
+          // --- 1. HARDWARE BACK BUTTON FIX ---
+          App.addListener('backButton', ({ canGoBack }) => {
+            if (canGoBack) {
+              window.history.back();
+            } else {
+              App.exitApp();
+            }
+          });
+
+          // --- 2. OFFLINE / LOW CONNECTION POPUP ---
+          const checkNetwork = async () => {
+            const status = await Network.getStatus();
+            const existing = document.getElementById('capacitor-offline-overlay');
+            
+            if (!status.connected) {
+              if (!existing) {
+                const overlay = document.createElement('div');
+                overlay.id = 'capacitor-offline-overlay';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:sans-serif;color:#fff;';
+                overlay.innerHTML = `
+                  <div style="background:#222;padding:30px;border-radius:12px;text-align:center;width:80%;max-width:320px;box-shadow:0 4px 15px rgba(0,0,0,0.5);">
+                    <h2 style="margin:0 0 10px;font-size:22px;">Offline</h2>
+                    <p style="margin:0 0 25px;font-size:15px;color:#ddd;">Please check your internet connection and try again.</p>
+                    <button id="retry-network-btn" style="background:#007bff;color:#fff;border:none;padding:12px 24px;border-radius:6px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;">Try Again</button>
+                  </div>
+                `;
+                document.body.appendChild(overlay);
+
+                document.getElementById('retry-network-btn').addEventListener('click', async () => {
+                  const currentStatus = await Network.getStatus();
+                  if (currentStatus.connected) {
+                    overlay.remove();
+                    window.location.reload();
+                  } else {
+                    const btn = document.getElementById('retry-network-btn');
+                    btn.innerText = 'Still Offline...';
+                    setTimeout(() => { btn.innerText = 'Try Again'; }, 1500);
+                  }
+                });
+              }
+            } else if (existing) {
+              existing.remove();
+            }
+          };
+
+          // Monitor network changes
+          Network.addListener('networkStatusChange', checkNetwork);
+          
+          // Check network when DOM is loaded
+          window.addEventListener('DOMContentLoaded', checkNetwork);
+          EOF
 
           npx esbuild bridge.js --bundle --minify --outfile=www/native-bridge.js
 
@@ -226,26 +286,6 @@ jobs:
               print("Warning: s.png not found!")
           EOF
 
-      - name: Fix Android Hardware Back Button
-        run: |
-          mkdir -p android/app/src/main/java/com/maharapro/app
-          cat << 'EOF' > android/app/src/main/java/com/maharapro/app/MainActivity.java
-          package com.maharapro.app;
-
-          import com.getcapacitor.BridgeActivity;
-
-          public class MainActivity extends BridgeActivity {
-              @Override
-              public void onBackPressed() {
-                  if (this.bridge != null && this.bridge.getWebView() != null && this.bridge.getWebView().canGoBack()) {
-                      this.bridge.getWebView().goBack();
-                  } else {
-                      super.onBackPressed();
-                  }
-              }
-          }
-          EOF
-
       - name: Fix Kotlin Clashes
         run: |
           echo "" >> android/app/build.gradle
@@ -272,7 +312,8 @@ jobs:
       - name: Set Version Code and Name
         run: |
           sed -i 's/versionCode [0-9]*/versionCode ${{ github.run_number }}/' android/app/build.gradle
-          sed -i 's/versionName "[^"]*"/versionName "1.0.3"/' android/app/build.gradle
+          # Uses the APP_VERSION variable you set at the top of the file
+          sed -i 's/versionName "[^"]*"/versionName "${{ env.APP_VERSION }}"/' android/app/build.gradle
 
       - name: Add Google Services JSON
         run: |
